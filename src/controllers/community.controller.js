@@ -11,6 +11,24 @@ const getAllCommunities = async (req, res) => {
   }
 };
 
+const getCommunityById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const community = await prisma.community.findUnique({
+      where: { id },
+      include: { members: true }
+    });
+
+    if (!community) {
+      return res.status(404).json({ error: 'Community not found' });
+    }
+
+    res.json(community);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 const joinCommunity = async (req, res) => {
   try {
     const user = await prisma.user.update({
@@ -26,5 +44,6 @@ const joinCommunity = async (req, res) => {
 
 module.exports = {
   getAllCommunities,
-  joinCommunity
+  joinCommunity,
+  getCommunityById
 };
