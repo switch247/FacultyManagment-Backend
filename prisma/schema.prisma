@@ -64,3 +64,11 @@ model Message {
   discussionId String       @db.ObjectId
   createdAt    DateTime     @default(now())
 }
+
+model Subscription {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  endpoint  String   @unique
+  keys      Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
