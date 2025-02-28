@@ -1,5 +1,5 @@
 const prisma = require('../config/db');
-const { sendNotification } = require('../utils/pushNotifications');
+const { sendNotification } = require('../utils/pushNotification');
 
 const createNews = async (req, res) => {
   try {
