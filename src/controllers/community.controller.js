@@ -61,9 +61,7 @@ const createCommunity = async (req, res) => {
         name,
         description,
         // Optionally, you can set the creator as the first member
-        members: {
-          connect: { id: req.user.id }
-        }
+     
       },
       include: { members: true }
     });
