@@ -42,8 +42,41 @@ const joinCommunity = async (req, res) => {
   }
 };
 
+const createCommunity = async (req, res) => {
+  try {
+    const { name, description } = req.body;
+
+    // Check if the community name already exists
+    const existingCommunity = await prisma.community.findUnique({
+      where: { name }
+    });
+
+    if (existingCommunity) {
+      return res.status(400).json({ error: 'Community with this name already exists' });
+    }
+
+    // Create the new community
+    const newCommunity = await prisma.community.create({
+      data: {
+        name,
+        description,
+        // Optionally, you can set the creator as the first member
+        members: {
+          connect: { id: req.user.id }
+        }
+      },
+      include: { members: true }
+    });
+
+    res.status(201).json(newCommunity);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 module.exports = {
   getAllCommunities,
   joinCommunity,
-  getCommunityById
+  getCommunityById,
+  createCommunity
 };
