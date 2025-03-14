@@ -1,23 +1,16 @@
-const prisma = require("../config/db");
-const { sendNotification } = require("../utils/pushNotification");
+const prisma = require('../config/db');
+const { sendNotification } = require('../utils/pushNotification');
 
 const createNews = async (req, res) => {
   try {
-    const { title, content, authorId } = req.body; // Extract authorId from the request body
+    const { title, content } = req.body;
 
-    // Validate required fields
-    if (!title || !content || !authorId) {
-      return res.status(400).json({ error: "Title, content, and authorId are required" });
-    }
-
-    // Create the news post and associate it with the author
+    // Create the news post
     const news = await prisma.news.create({
       data: {
         title,
         content,
-        author: {
-          connect: { id: authorId }, // Connect the news to the author using authorId
-        },
+        authorId: req.user.id,
       },
     });
 
@@ -27,7 +20,7 @@ const createNews = async (req, res) => {
     // Send push notifications to all subscribers
     subscriptions.forEach((subscription) => {
       sendNotification(subscription, {
-        title: "New News Alert!",
+        title: 'New News Alert!',
         body: news.title,
       });
     });
@@ -41,7 +34,7 @@ const createNews = async (req, res) => {
 const getNews = async (req, res) => {
   try {
     const news = await prisma.news.findMany({
-      include: { author: true }, // Include the author details in the response
+      include: { author: true },
     });
     res.json(news);
   } catch (error) {
