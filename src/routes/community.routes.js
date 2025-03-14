@@ -11,6 +11,6 @@ const {
 router.get('/', getAllCommunities);
 router.get('/:id', getCommunityById);
 router.post('/',createCommunity); // New route for creating a community
-router.patch('/:communityId/join', authenticate, joinCommunity);
+router.patch('/:communityId/join',joinCommunity);
 
 module.exports = router;

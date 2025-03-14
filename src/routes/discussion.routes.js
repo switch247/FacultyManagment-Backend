@@ -11,21 +11,21 @@ const {
 } = require('../controllers/discussion.controller');
 
 // Create discussion
-router.post('/', authenticate, createDiscussion);
+router.post('/', createDiscussion);
 
 // Get discussion with messages
-router.get('/:discussionId', authenticate, getDiscussionById);
+router.get('/:discussionId', getDiscussionById);
 
 // Send message to discussion
-router.post('/:discussionId/messages', authenticate, sendMessage);
+router.post('/:discussionId/messages', sendMessage);
 
 // Update message
-router.put('/messages/:messageId', authenticate, updateMessage);
+router.put('/messages/:messageId', updateMessage);
 
 // Delete message
-router.delete('/messages/:messageId', authenticate, deleteMessage);
+router.delete('/messages/:messageId', deleteMessage);
 
 // Search discussions
-router.get('/search/all', authenticate, searchDiscussions);
+router.get('/search/all', searchDiscussions);
 
 module.exports = router;
