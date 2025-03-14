@@ -7,10 +7,10 @@ const { subscribe } = require('../controllers/subscription.controller');
 
 // Create news (admin/staff only)
 router.post(
-  '/', createNews
-  // authenticate,
-  // authorize('admin', 'staff'),
-
+  '/',
+  authenticate,
+  authorize('admin', 'staff'),
+  createNews
 );
 
 // Get all news (public)
