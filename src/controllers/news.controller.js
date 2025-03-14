@@ -10,7 +10,7 @@ const createNews = async (req, res) => {
       data: {
         title,
         content,
-        authorId: req.user.id,
+       
       },
     });
 
