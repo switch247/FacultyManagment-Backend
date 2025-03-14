@@ -1,5 +1,5 @@
-const prisma = require('../config/db');
-const { sendNotification } = require('../utils/pushNotification');
+const prisma = require("../config/db");
+const { sendNotification } = require("../utils/pushNotification");
 
 const createNews = async (req, res) => {
   try {
@@ -10,7 +10,6 @@ const createNews = async (req, res) => {
       data: {
         title,
         content,
-       
       },
     });
 
@@ -20,7 +19,7 @@ const createNews = async (req, res) => {
     // Send push notifications to all subscribers
     subscriptions.forEach((subscription) => {
       sendNotification(subscription, {
-        title: 'New News Alert!',
+        title: "New News Alert!",
         body: news.title,
       });
     });
