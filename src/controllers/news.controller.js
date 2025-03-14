@@ -3,13 +3,21 @@ const { sendNotification } = require("../utils/pushNotification");
 
 const createNews = async (req, res) => {
   try {
-    const { title, content } = req.body;
+    const { title, content, authorId } = req.body; // Extract authorId from the request body
 
-    // Create the news post
+    // Validate required fields
+    if (!title || !content || !authorId) {
+      return res.status(400).json({ error: "Title, content, and authorId are required" });
+    }
+
+    // Create the news post and associate it with the author
     const news = await prisma.news.create({
       data: {
         title,
         content,
+        author: {
+          connect: { id: authorId }, // Connect the news to the author using authorId
+        },
       },
     });
 
@@ -33,7 +41,7 @@ const createNews = async (req, res) => {
 const getNews = async (req, res) => {
   try {
     const news = await prisma.news.findMany({
-      include: { author: true },
+      include: { author: true }, // Include the author details in the response
     });
     res.json(news);
   } catch (error) {
