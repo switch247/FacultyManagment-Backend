@@ -10,7 +10,6 @@ router.post('/login', login);
 router.get(
    '/users',
    authenticate,
-   authorize(['admin']), // Only allow admins
    getUsers
  );
 module.exports = router;
