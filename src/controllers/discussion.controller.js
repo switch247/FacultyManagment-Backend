@@ -61,7 +61,7 @@ const sendMessage = async (req, res) => {
   }
 };
 
-// Get a discussion by ID with paginated messages
+
 const getDiscussionById = async (req, res) => {
   try {
     const { page = 1, limit = 20 } = req.query;
