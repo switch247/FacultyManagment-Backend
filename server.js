@@ -15,10 +15,10 @@ const logger = require("./src/utils/logger");
 const app = express();
 const server = http.createServer(app);
 
-// Socket.IO Configuration
+
 const io = new Server(server, {
   cors: {
-    origin: "*", // Allow all origins (for development)
+    origin: "*", 
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Authorization", "Content-Type"],
     credentials: true,
@@ -135,6 +135,7 @@ io.on("connection", (socket) => {
   socket.on("disconnect", (reason) => {
     logger.info(`User disconnected: ${socket.user.name} (Reason: ${reason})`);
   });
+
 });
 
 // Error Handling Middleware

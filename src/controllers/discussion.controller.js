@@ -1,4 +1,4 @@
-const prisma = require('../config/db');
+const prisma = require("../config/db");
 
 // Create a new discussion
 const createDiscussion = async (req, res) => {
@@ -7,7 +7,7 @@ const createDiscussion = async (req, res) => {
 
     // Validate required fields
     if (!title || !content || !authorId || !communityId) {
-      return res.status(400).json({ error: 'Missing required fields' });
+      return res.status(400).json({ error: "Missing required fields" });
     }
 
     const discussion = await prisma.discussion.create({
@@ -37,14 +37,14 @@ const sendMessage = async (req, res) => {
 
     // Validate required fields
     if (!content || !authorId || !discussionId) {
-      return res.status(400).json({ error: 'Missing required fields' });
+      return res.status(400).json({ error: "Missing required fields" });
     }
 
     const messageData = {
       content,
       authorId,
       discussionId,
-      parentMessageId: parentMessageId || null,
+      parentMessageId: parentMessageId || undefined,
     };
 
     const message = await prisma.message.create({
@@ -57,21 +57,24 @@ const sendMessage = async (req, res) => {
 
     res.status(201).json(message);
   } catch (error) {
+    console.log(error);
     res.status(400).json({ error: error.message });
   }
 };
 
-
 const getDiscussionById = async (req, res) => {
   try {
     const { page = 1, limit = 20 } = req.query;
+    const { parentMessageId } = req.params;
+    let whereClause = {};
+    if (parentMessageId) whereClause.parentMessageId = parentMessageId;
     const discussion = await prisma.discussion.findUnique({
       where: { id: req.params.discussionId },
       include: {
         author: true,
         community: true,
         messages: {
-          where: { parentMessageId: null },
+          where: whereClause,
           include: {
             author: true,
             replies: {
@@ -82,17 +85,18 @@ const getDiscussionById = async (req, res) => {
           },
           skip: (page - 1) * limit,
           take: parseInt(limit),
-          orderBy: { createdAt: 'desc' },
+          orderBy: { createdAt: "desc" },
         },
       },
     });
 
     if (!discussion) {
-      return res.status(404).json({ error: 'Discussion not found' });
+      return res.status(404).json({ error: "Discussion not found" });
     }
 
     res.json(discussion);
   } catch (error) {
+    console.log(error);
     res.status(500).json({ error: error.message });
   }
 };
@@ -105,7 +109,7 @@ const updateMessage = async (req, res) => {
 
     // Validate required fields
     if (!content || !authorId) {
-      return res.status(400).json({ error: 'Missing required fields' });
+      return res.status(400).json({ error: "Missing required fields" });
     }
 
     const message = await prisma.message.findUnique({
@@ -113,11 +117,11 @@ const updateMessage = async (req, res) => {
     });
 
     if (!message) {
-      return res.status(404).json({ error: 'Message not found' });
+      return res.status(404).json({ error: "Message not found" });
     }
 
     if (message.authorId !== authorId) {
-      return res.status(403).json({ error: 'Unauthorized' });
+      return res.status(403).json({ error: "Unauthorized" });
     }
 
     const updatedMessage = await prisma.message.update({
@@ -140,7 +144,7 @@ const deleteMessage = async (req, res) => {
 
     // Validate required fields
     if (!authorId || !role) {
-      return res.status(400).json({ error: 'Missing required fields' });
+      return res.status(400).json({ error: "Missing required fields" });
     }
 
     const message = await prisma.message.findUnique({
@@ -148,11 +152,11 @@ const deleteMessage = async (req, res) => {
     });
 
     if (!message) {
-      return res.status(404).json({ error: 'Message not found' });
+      return res.status(404).json({ error: "Message not found" });
     }
 
-    if (message.authorId !== authorId && role !== 'admin') {
-      return res.status(403).json({ error: 'Unauthorized' });
+    if (message.authorId !== authorId && role !== "admin") {
+      return res.status(403).json({ error: "Unauthorized" });
     }
 
     await prisma.message.delete({
@@ -171,14 +175,14 @@ const searchDiscussions = async (req, res) => {
     const { query } = req.query;
 
     if (!query) {
-      return res.status(400).json({ error: 'Query parameter is required' });
+      return res.status(400).json({ error: "Query parameter is required" });
     }
 
     const discussions = await prisma.discussion.findMany({
       where: {
         OR: [
-          { title: { contains: query, mode: 'insensitive' } },
-          { content: { contains: query, mode: 'insensitive' } },
+          { title: { contains: query, mode: "insensitive" } },
+          { content: { contains: query, mode: "insensitive" } },
         ],
       },
       include: {
