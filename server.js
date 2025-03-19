@@ -25,7 +25,7 @@ const io = new Server(server, {
   },
 });
 
-// Express Middleware
+
 app.use(
   cors({
     origin: "*",
@@ -40,7 +40,6 @@ app.use((req, res, next) => {
   next();
 });
 
-// Health Check Endpoint
 app.get("/health", (req, res) => {
   res.status(200).json({
     status: "ok",
@@ -48,14 +47,13 @@ app.get("/health", (req, res) => {
   });
 });
 
-// API Routes
+
 app.use("/api/auth", authRoutes);
 app.use("/api/profile", profileRoutes);
 app.use("/api/news", newsRoutes);
 app.use("/api/discussions", discussionRoutes);
 app.use("/api/communities", communityRoutes);
 
-// Socket.IO Authentication
 io.use(async (socket, next) => {
   try {
     const token = socket.handshake.auth.token;
@@ -82,7 +80,7 @@ io.use(async (socket, next) => {
   }
 });
 
-// Socket.IO Event Handlers
+
 io.on("connection", (socket) => {
   logger.info(`User connected: ${socket.user.name} (ID: ${socket.id})`);
 
@@ -138,13 +136,13 @@ io.on("connection", (socket) => {
 
 });
 
-// Error Handling Middleware
+
 app.use((err, req, res, next) => {
   logger.error(err.stack);
   res.status(500).json({ error: "Internal Server Error" });
 });
 
-// Graceful Shutdown
+
 process.on("SIGINT", gracefulShutdown);
 process.on("SIGTERM", gracefulShutdown);
 
@@ -162,7 +160,7 @@ function gracefulShutdown() {
   }, 5000);
 }
 
-// Start Server
+
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => {
   logger.info(`Server running on port ${PORT}`);
