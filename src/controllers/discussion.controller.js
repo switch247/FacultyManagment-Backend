@@ -1,6 +1,5 @@
 const prisma = require("../config/db");
 
-// Create a new discussion
 const createDiscussion = async (req, res) => {
   try {
     const { title, content, authorId, communityId } = req.body;
@@ -29,22 +28,28 @@ const createDiscussion = async (req, res) => {
   }
 };
 
-// Send a message in a discussion
 const sendMessage = async (req, res) => {
   try {
     const { content, authorId, parentMessageId } = req.body;
     const { discussionId } = req.params;
 
-    // Validate required fields
+   
     if (!content || !authorId || !discussionId) {
       return res.status(400).json({ error: "Missing required fields" });
     }
 
+    const user = await prisma.user.findUnique({
+      where: { id: authorId },
+    }); 
+    if (!user) {
+      return res.status(404).json({ error: "user not found" });
+    }
     const messageData = {
       content,
       authorId,
       discussionId,
       parentMessageId: parentMessageId || undefined,
+      role:user.role,
     };
 
     const message = await prisma.message.create({
@@ -101,13 +106,13 @@ const getDiscussionById = async (req, res) => {
   }
 };
 
-// Update a message
+
 const updateMessage = async (req, res) => {
   try {
     const { content, authorId } = req.body;
     const { messageId } = req.params;
 
-    // Validate required fields
+
     if (!content || !authorId) {
       return res.status(400).json({ error: "Missing required fields" });
     }
@@ -136,7 +141,7 @@ const updateMessage = async (req, res) => {
   }
 };
 
-// Delete a message
+
 const deleteMessage = async (req, res) => {
   try {
     const { authorId, role } = req.body;
@@ -169,7 +174,7 @@ const deleteMessage = async (req, res) => {
   }
 };
 
-// Search discussions by title or content
+
 const searchDiscussions = async (req, res) => {
   try {
     const { query } = req.query;

@@ -1,9 +1,9 @@
-const prisma = require('../config/db');
+const prisma = require("../config/db");
 
 const getAllCommunities = async (req, res) => {
   try {
     const communities = await prisma.community.findMany({
-      include: { members: true }
+      include: { members: true },
     });
     res.json(communities);
   } catch (error) {
@@ -16,11 +16,11 @@ const getCommunityById = async (req, res) => {
     const { id } = req.params;
     const community = await prisma.community.findUnique({
       where: { id },
-      include: { members: true }
+      include: { members: true },
     });
 
     if (!community) {
-      return res.status(404).json({ error: 'Community not found' });
+      return res.status(404).json({ error: "Community not found" });
     }
 
     res.json(community);
@@ -31,13 +31,16 @@ const getCommunityById = async (req, res) => {
 
 const joinCommunity = async (req, res) => {
   try {
+    console.log("doees user exist:", req.user);
+    const { userId } = req.body;
     const user = await prisma.user.update({
-      where: { id: req.user.id },
+      where: { id: userId },
       data: { communityId: req.params.communityId },
-      include: { community: true }
+      include: { community: true },
     });
     res.json(user);
   } catch (error) {
+    console.error(error);
     res.status(400).json({ error: error.message });
   }
 };
@@ -48,11 +51,13 @@ const createCommunity = async (req, res) => {
 
     // Check if the community name already exists
     const existingCommunity = await prisma.community.findUnique({
-      where: { name }
+      where: { name },
     });
 
     if (existingCommunity) {
-      return res.status(400).json({ error: 'Community with this name already exists' });
+      return res
+        .status(400)
+        .json({ error: "Community with this name already exists" });
     }
 
     // Create the new community
@@ -61,9 +66,8 @@ const createCommunity = async (req, res) => {
         name,
         description,
         // Optionally, you can set the creator as the first member
-     
       },
-      include: { members: true }
+      include: { members: true },
     });
 
     res.status(201).json(newCommunity);
@@ -76,5 +80,5 @@ module.exports = {
   getAllCommunities,
   joinCommunity,
   getCommunityById,
-  createCommunity
+  createCommunity,
 };

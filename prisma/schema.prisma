@@ -62,13 +62,12 @@ model Message {
   authorId     String       @db.ObjectId
   discussion   Discussion   @relation(fields: [discussionId], references: [id])
   discussionId String       @db.ObjectId
+  role         String       // Add this line to include the role field
   createdAt    DateTime     @default(now())
 
   parentMessageId String?  @unique @db.ObjectId 
-  ParentMessage Message? @relation("messageReplies", fields:[parentMessageId], references:[id], onDelete:NoAction, onUpdate:NoAction)
-
-  replies Message[] @relation("messageReplies")
-
+  ParentMessage   Message? @relation("messageReplies", fields: [parentMessageId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  replies        Message[] @relation("messageReplies")
 }
 
 model Subscription {
