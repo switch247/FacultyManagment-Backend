@@ -31,7 +31,7 @@ const getCommunityById = async (req, res) => {
 
 const joinCommunity = async (req, res) => {
   try {
-    console.log("doees user exist:", req.user);
+    console.log("does user exist:", req.user);
     const { userId } = req.body;
     const user = await prisma.user.update({
       where: { id: userId },
