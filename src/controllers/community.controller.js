@@ -76,9 +76,33 @@ const createCommunity = async (req, res) => {
   }
 };
 
+const getCommunityDiscussions = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const community = await prisma.community.findUnique({
+      where: { id },
+      include: { members: true },
+    });
+
+    if (!community) {
+      return res.status(404).json({ error: "Community not found" });
+    }
+    const discussions = await prisma.discussion.findMany({
+      where: {
+        communityId: id,
+      },
+    });
+
+    res.json(discussions);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 module.exports = {
   getAllCommunities,
   joinCommunity,
   getCommunityById,
   createCommunity,
+  getCommunityDiscussions,
 };
