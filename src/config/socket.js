@@ -3,6 +3,7 @@ const { Server } = require("socket.io");
 const express = require("express");
 const jwt = require("jsonwebtoken");
 
+const prisma = require("../config/db");
 const logger = require("../utils/logger");
 const app = express();
 const server = http.createServer(app);
@@ -19,7 +20,7 @@ const io = new Server(server, {
 io.use(async (socket, next) => {
   try {
     const token = socket.handshake.auth.token;
-    logger.debug(`Socket connection attempt with token: ${token}`);
+    logger.info(`Socket connection attempt with token: ${token}`);
 
     if (!token) {
       throw new Error("No token provided");
@@ -37,7 +38,7 @@ io.use(async (socket, next) => {
     logger.info(`Socket authenticated for user: ${user.email}`);
     next();
   } catch (error) {
-    logger.error("Socket authentication failed:", error.message);
+    logger.error("Socket authentication failed:", error);
     next(new Error("Authentication error"));
   }
 });
