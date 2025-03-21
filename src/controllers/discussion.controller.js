@@ -58,7 +58,7 @@ const sendMessage = async (req, res) => {
         replies: true,
       },
     });
-    io.to(discussionId).emit("newMessage", message);
+    io.emit("newMessage", message);
     res.status(201).json(message);
   } catch (error) {
     console.log(error);
